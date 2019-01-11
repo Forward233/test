@@ -438,7 +438,7 @@ public final class MyTools {
 	}
 
 	/**
-	 * JSON 字符串转换为 JavaBean
+	 * JSON字符串转换为 JavaBean
 	 * 
 	 * @param str
 	 * @param t
@@ -489,7 +489,7 @@ public final class MyTools {
 	}
 
 	/**
-	 * 将map转化为string
+	 * 将map转化为json string
 	 * 
 	 * @param m
 	 * @return
@@ -732,6 +732,7 @@ public final class MyTools {
 	 * byte数组转换成int数组
 	 * 
 	 * @param bytes
+	 * 
 	 * @return
 	 */
 	public static int[] bytes2int(byte[] bytes) {
@@ -752,140 +753,150 @@ public final class MyTools {
 		/*
 		 * String 和List 空数据判断
 		 */
-		String str1 = "";
-		String str2 = " ";
-		String str3 = null;
-		String str4 = "a";
-		List<?> list = null;
-		List<String> list2 = new ArrayList<String>();
-		List<Object> list3 = new ArrayList<Object>();
-		list3.add("a");
-
-		System.out.println("str1 :" + isEmpty(str1)); // str1 :true
-		System.out.println("str2 :" + isEmpty(str2)); // str2 :true
-		System.out.println("str3 :" + isEmpty(str3)); // str3 :true
-		System.out.println("str4 :" + isEmpty(str4)); // str4 :false
-		System.out.println("list :" + isEmpty(list)); // list :true
-		System.out.println("list2 :" + isEmpty(list2)); // list2 :true
-		System.out.println("list3 :" + isEmpty(list3)); // list3 :false
-
-		/*
-		 * 时间
-		 */
-		long start = getNowLongTime();
-		System.out.println("getNowTime():" + getNowTime()); // getNowTime():2017-09-26
-															// 17:46:44
-		System.out.println("getNowLongTime():" + getNowLongTime()); // getNowLongTime():1506419204920
-		System.out.println("getNowTime(sdfm):" + getNowTime(sdfm)); // getNowTime(sdfm):2017-09-26
-																	// 17:46:44
-																	// 920
-		System.out.println("当时时间向前推移30秒:" + changeTime(-30, sdf, "s")); // 2017-09-26
-																		// 17:46:14
-		System.out.println("时间比较:" + isCompareDay(getNowTime(sdfm), changeTime(-30, sdf, "s"), "")); // 时间比较:false
-		System.out.println("getTNowTime():" + getTNowTime()); // getTNowTime():2017-09-26
-																// 17:46:44.921
-		System.out.println("LongTime2StringTime():" + longTime2StringTime(start, sd)); // LongTime2StringTime():20170926174644
-
-		/*
-		 * 整型判断
-		 */
-		String st = "258369";
-		String st2 = "258369A!@";
-		String st3 = "258  369 ";
-		System.out.println("st:" + isInteger(st)); // st:true
-		System.out.println("st2:" + isInteger(st2)); // st2:false
-		System.out.println("st3:" + isInteger(st3)); // st3:false
-
-		/*
-		 * 字符串反转
-		 */
-		String re = "abcdefg";
-		System.out.println("字符串反转:" + reverse(re)); // 字符串反转:gfedcba
-
-		/*
-		 * 本机IP
-		 */
-		try {
-			System.out.println("本机IP:" + getLocalHostIp()); // 本机IP:192.168.1.111
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-
-		/*
-		 * 随机数
-		 */
-
-		System.out.println("6位随机数:" + random(6)); // 6位随机数:222488
-		System.out.println("10位随机数:" + random2(10)); // 10位随机数:ZwW0pmofjW
-
-		/*
-		 * JSON数据转换
-		 */
-
-		String value = "name1=value1&name2=value2&name3=value3";
-		JSONObject json = new JSONObject();
-		json.put("name1", "value1");
-		json.put("name2", "value2");
-		json.put("name3", "value3");
-		System.out.println("value:" + value); // value:name1=value1&name2=value2&name3=value3
-		System.out.println("str2Json:" + str2Json(value)); // str2Json:{"name1":"value1","name2":"value2","name3":"value3"}
-		System.out.println("json:" + json.toJSONString()); // json:{"name1":"value1","name2":"value2","name3":"value3"}
-		System.out.println("json2Str:" + json2Str(json)); // json2Str:name3=value3&name1=value1&name2=value2
-
-		String jsonString = json.toJSONString();
-		System.out.println("jsonString:" + jsonString); // {"name1":"value1","name2":"value2","name3":"value3"}
-		System.out.println("toJson(jsonString):" + toJson(jsonString)); // toJson(jsonString):{"name1":"value1","name2":"value2","name3":"value3"}
-
-		System.out.println("long TO String" + longTime2StringTime(32472115200L));
-		System.out.println("long TO String" + longTime2StringTime(1513330097L));
-
-		String time1 = "2018-04-04";
-		String time2 = "2018-04-04 14:48:00";
-		String time3 = "2018-04-04 14:48:00.000";
-		System.out.println("时间补全:" + complementTime(time1, sdfm, 1));
-		System.out.println("时间补全:" + complementTime(time2, sdfm, 2));
-		System.out.println("时间补全:" + complementTime(time3, sdfm, 1));
-
-		/*
-		 * 
-		 */
-		int l = 2;
-		String string = "10101";
-		System.out.println(l + " 十进制转二进制: " + decToBinary(l));
-
-		System.out.println(string + " 二进制转十进制: " + binaryToDec(string));
-
-		System.out.println("==" + (768 & 815));
-
-		System.out.println(md5Encode("【梦网科技】test"));
-
-		/*
-		 * byte数组拼接测试
-		 */
-		byte[] a = { 1, 2 }, b = { 3, 4 };
-		byte[] c = addBytes(a, b);
-		System.out.println(c.length);
-
-		/*
-		 * byte 数组加密测试
-		 */
-		byte[] ad = intToBytes(0);
-		int[] at = bytes2int(ad);
-		byte[] secretBytes = null;
-		try {
-			secretBytes = MessageDigest.getInstance("md5").digest(ad);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		System.out.println(secretBytes.length);
+//		String str1 = "";
+//		String str2 = " ";
+//		String str3 = null;
+//		String str4 = "a";
+//		List<?> list = null;
+//		List<String> list2 = new ArrayList<String>();
+//		List<Object> list3 = new ArrayList<Object>();
+//		list3.add("a");
+//
+//		System.out.println("str1 :" + isEmpty(str1)); // str1 :true
+//		System.out.println("str2 :" + isEmpty(str2)); // str2 :true
+//		System.out.println("str3 :" + isEmpty(str3)); // str3 :true
+//		System.out.println("str4 :" + isEmpty(str4)); // str4 :false
+//		System.out.println("list :" + isEmpty(list)); // list :true
+//		System.out.println("list2 :" + isEmpty(list2)); // list2 :true
+//		System.out.println("list3 :" + isEmpty(list3)); // list3 :false
+//
+//		/*
+//		 * 时间
+//		 */
+//		long start = getNowLongTime();
+//		System.out.println("getNowTime():" + getNowTime()); // getNowTime():2017-09-26
+//															// 17:46:44
+//		System.out.println("getNowLongTime():" + getNowLongTime()); // getNowLongTime():1506419204920
+//		System.out.println("getNowTime(sdfm):" + getNowTime(sdfm)); // getNowTime(sdfm):2017-09-26
+//																	// 17:46:44
+//																	// 920
+//		System.out.println("当时时间向前推移30秒:" + changeTime(-30, sdf, "s")); // 2017-09-26
+//																		// 17:46:14
+//		System.out.println("时间比较:" + isCompareDay(getNowTime(sdfm), changeTime(-30, sdf, "s"), "")); // 时间比较:false
+//		System.out.println("getTNowTime():" + getTNowTime()); // getTNowTime():2017-09-26
+//																// 17:46:44.921
+//		System.out.println("LongTime2StringTime():" + longTime2StringTime(start, sd)); // LongTime2StringTime():20170926174644
+//
+//		/*
+//		 * 整型判断
+//		 */
+//		String st = "258369";
+//		String st2 = "258369A!@";
+//		String st3 = "258  369 ";
+//		System.out.println("st:" + isInteger(st)); // st:true
+//		System.out.println("st2:" + isInteger(st2)); // st2:false
+//		System.out.println("st3:" + isInteger(st3)); // st3:false
+//
+//		/*
+//		 * 字符串反转
+//		 */
+//		String re = "abcdefg";
+//		System.out.println("字符串反转:" + reverse(re)); // 字符串反转:gfedcba
+//
+//		/*
+//		 * 本机IP
+//		 */
+//		try {
+//			System.out.println("本机IP:" + getLocalHostIp()); // 本机IP:192.168.1.111
+//		} catch (UnknownHostException e) {
+//			e.printStackTrace();
+//		}
+//
+//		/*
+//		 * 随机数
+//		 */
+//
+//		System.out.println("6位随机数:" + random(6)); // 6位随机数:222488
+//		System.out.println("10位随机数:" + random2(10)); // 10位随机数:ZwW0pmofjW
+//
+//		/*
+//		 * JSON数据转换
+//		 */
+//
+//		String value = "name1=value1&name2=value2&name3=value3";
+//		JSONObject json = new JSONObject();
+//		json.put("name1", "value1");
+//		json.put("name2", "value2");
+//		json.put("name3", "value3");
+//		System.out.println("value:" + value); // value:name1=value1&name2=value2&name3=value3
+//		System.out.println("str2Json:" + str2Json(value)); // str2Json:{"name1":"value1","name2":"value2","name3":"value3"}
+//		System.out.println("json:" + json.toJSONString()); // json:{"name1":"value1","name2":"value2","name3":"value3"}
+//		System.out.println("json2Str:" + json2Str(json)); // json2Str:name3=value3&name1=value1&name2=value2
+//
+//		String jsonString = json.toJSONString();
+//		System.out.println("jsonString:" + jsonString); // {"name1":"value1","name2":"value2","name3":"value3"}
+//		System.out.println("toJson(jsonString):" + toJson(jsonString)); // toJson(jsonString):{"name1":"value1","name2":"value2","name3":"value3"}
+//
+//		System.out.println("long TO String" + longTime2StringTime(32472115200L));
+//		System.out.println("long TO String" + longTime2StringTime(1513330097L));
+//
+//		String time1 = "2018-04-04";
+//		String time2 = "2018-04-04 14:48:00";
+//		String time3 = "2018-04-04 14:48:00.000";
+//		System.out.println("时间补全:" + complementTime(time1, sdfm, 1));
+//		System.out.println("时间补全:" + complementTime(time2, sdfm, 2));
+//		System.out.println("时间补全:" + complementTime(time3, sdfm, 1));
+//
+//		/*
+//		 * 
+//		 */
+//		int l = 2;
+//		String string = "10101";
+//		System.out.println(l + " 十进制转二进制: " + decToBinary(l));
+//
+//		System.out.println(string + " 二进制转十进制: " + binaryToDec(string));
+//
+//		System.out.println("==" + (768 & 815));
+//
+//		System.out.println(md5Encode("【梦网科技】test"));
+//
+//		/*
+//		 * byte数组拼接测试
+//		 */
+//		byte[] a = { 1, 2 }, b = { 3, 4 };
+//		byte[] c = addBytes(a, b);
+//		System.out.println(c.length);
+//
+//		/*
+//		 * byte 数组加密测试
+//		 */
+//		byte[] ad = intToBytes(0);
+//		int[] at = bytes2int(ad);
+//		byte[] secretBytes = null;
+//		try {
+//			secretBytes = MessageDigest.getInstance("md5").digest(ad);
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		}
+//
+//		System.out.println(secretBytes.length);
+//		
+//		System.out.println(md5Encode(new String(ad)));
+//		System.out.println(md5Encode(new String(at, 0, at.length)));
+//		
+//		String sno ="2YRKMVEHIE51HNX3YZF0";
+//		System.out.println(md5Encode(sno));
+		char s = 'a';
+		System.out.println((int)s);
 		
-		System.out.println(md5Encode(new String(ad)));
-		System.out.println(md5Encode(new String(at, 0, at.length)));
-		
-		String sno ="2YRKMVEHIE51HNX3YZF0";
-		System.out.println(md5Encode(sno));
+		String string = "12345";
+		char[] charArray = string.toCharArray();
+		for (char c : charArray) {
+			if(c == '1') {
+				System.out.println(c);
+			}
+			
+		}
 		
 	}
-
 }
