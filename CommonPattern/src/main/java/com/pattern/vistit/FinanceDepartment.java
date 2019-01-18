@@ -1,4 +1,4 @@
-package com.test.pattern.vistit;
+package com.pattern.vistit;
 
 public class FinanceDepartment extends Department{
 

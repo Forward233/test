@@ -10,4 +10,4 @@
  * 					 4.定义处理这些不同类型数据的总接口，不同类型的处理类去实现它（即不同的处理逻辑或算法）
  * 					 5.
  */
-package com.test.pattern.vistit;
+package com.pattern.vistit;

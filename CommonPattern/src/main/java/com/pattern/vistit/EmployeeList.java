@@ -1,4 +1,4 @@
-package com.test.pattern.vistit;
+package com.pattern.vistit;
 
 import java.util.ArrayList;
 import java.util.List;
