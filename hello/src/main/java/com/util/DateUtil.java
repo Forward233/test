@@ -1,4 +1,4 @@
-package com.test.util;
+package com.util;
 
 public class DateUtil {
 
