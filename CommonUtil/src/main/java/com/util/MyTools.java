@@ -579,7 +579,7 @@ public final class MyTools {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List convertList(ResultSet rs) throws SQLException {
 		if (null == rs) {
-			return new ArrayList<>();
+			return new ArrayList<Object>();
 		}
 		List list = new ArrayList();
 		ResultSetMetaData md = rs.getMetaData();

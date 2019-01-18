@@ -26,11 +26,12 @@ import org.slf4j.LoggerFactory;
  * @date 2018年1月5日
  */
 public class DBUtil {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(DBUtil.class);
-	
+
 	/**
-	 *  新增/修改
+	 * 新增/修改
+	 * 
 	 * @param sql
 	 * @return
 	 * @throws SQLException
@@ -46,57 +47,80 @@ public class DBUtil {
 		} catch (SQLException e) {
 			throw e;
 		} finally {
-			close(null, stmt,connection);
+			close(null, stmt, connection);
 		}
 		return i;
 	}
-	
+
+	public static int executeUpdate(StringBuilder[] sql) throws SQLException {
+		Statement stmt = null;
+		Connection connection = null;
+		int i = 0;
+		try {
+			connection = ConnectionManager.getInstance().getConnection();
+			connection.setAutoCommit(false);
+			stmt = connection.createStatement();
+			for (int j = 0; j < sql.length; j++) {
+				i = stmt.executeUpdate(sql[j].toString());
+			}
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			close(null, stmt, connection);
+		}
+		return i;
+	}
+
 	/**
 	 * 批量插入/更新
+	 * 
 	 * @param sqls
 	 * @return
 	 * @throws SQLException
 	 */
-	public int[] updateBatch(List<String> sqls) throws SQLException{
+	public int[] updateBatch(List<String> sqls) throws SQLException {
 		Statement stmt = null;
 		Connection connection = null;
-		int[] t={0,0};
+		int[] t = { 0, 0 };
 		try {
 			connection = ConnectionManager.getInstance().getConnection();
 			stmt = connection.createStatement();
-			  /**设置不自动提交，以便于在出现异常的时候数据库回滚**/
-            connection.setAutoCommit(false);
+			/** 设置不自动提交，以便于在出现异常的时候数据库回滚 **/
+			connection.setAutoCommit(false);
 			for (int i = 0, j = sqls.size(); i < j; i++) {
 				stmt.addBatch(sqls.get(i));
 			}
-			t=stmt.executeBatch();
-		    connection.commit();
+			t = stmt.executeBatch();
+			connection.commit();
 		} catch (Exception e) {
 			if (connection != null) {
 				logger.warn("开始数据回滚...");
-                try {
+				try {
 					connection.rollback();
 				} catch (SQLException e1) {
 					logger.error("数据回滚失败...", e1);
 				}
-            }
+			}
 		} finally {
-			close(null,stmt,connection);
+			close(null, stmt, connection);
 		}
 		return t;
 	}
-	
+
 	/**
-	 *    查询
+	 * 查询
+	 * 
 	 * @param sql
 	 * @return
 	 * @throws SQLException
 	 */
-	public static List<Map<String, Object>>  executeQuery(String sql) throws SQLException {
+	public static List<Map<String, Object>> executeQuery(String sql) throws SQLException {
 		Statement stmt = null;
 		Connection connection = null;
 		ResultSet rs = null;
-		List<Map<String, Object>>  list= null;
+		List<Map<String, Object>> list = null;
 		try {
 			connection = ConnectionManager.getInstance().getConnection();
 			stmt = connection.createStatement();
@@ -105,16 +129,12 @@ public class DBUtil {
 		} catch (SQLException e) {
 			throw e;
 		} finally {
-			close(rs, stmt,connection);
+			close(rs, stmt, connection);
 		}
 		return list;
 	}
-	
-	
 
-	
-	
-	 /**
+	/**
 	 * 将查询的数据转换成List类型
 	 * 
 	 * @param rs
@@ -137,16 +157,16 @@ public class DBUtil {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 执行数据库插入操作
 	 *
 	 * @param valueMap  插入数据表中key为列名和value为列对应的值的Map对象
 	 * @param tableName 要插入的数据库的表名
 	 * @return 影响的行数
-	 * @throws SQLException SQL异常
+	 * @throws Exception 
 	 */
-	public static int insert(String tableName, Map<String, Object> valueMap) throws SQLException {
+	public static int insert(String tableName, Map<String, Object> valueMap) throws Exception {
 
 		/** 获取数据库插入的Map的键值对的值 **/
 		Set<String> keySet = valueMap.keySet();
@@ -185,9 +205,9 @@ public class DBUtil {
 	 * @param datas     插入数据表中key为列名和value为列对应的值的Map对象的List集合
 	 * @param tableName 要插入的数据库的表名
 	 * @return 影响的行数
-	 * @throws SQLException SQL异常
+	 * @throws Exception 
 	 */
-	public static int insertAll(String tableName, List<Map<String, Object>> datas) throws SQLException {
+	public static int insertAll(String tableName, List<Map<String, Object>> datas) throws Exception {
 		/** 影响的行数 **/
 		int affectRowCount = -1;
 		Connection connection = null;
@@ -266,10 +286,9 @@ public class DBUtil {
 	 * @param valueMap  要更改的值
 	 * @param whereMap  条件
 	 * @return 影响的行数
-	 * @throws SQLException SQL异常
+	 * @throws Exception 
 	 */
-	public static int update(String tableName, Map<String, Object> valueMap, Map<String, Object> whereMap)
-			throws SQLException {
+	public static int update(String tableName, Map<String, Object> valueMap, Map<String, Object> whereMap) throws Exception {
 		/** 获取数据库插入的Map的键值对的值 **/
 		Set<String> keySet = valueMap.keySet();
 		Iterator<String> iterator = keySet.iterator();
@@ -282,7 +301,7 @@ public class DBUtil {
 		/** 要更改的的字段sql，其实就是用key拼起来的 **/
 		StringBuilder columnSql = new StringBuilder();
 		int i = 0;
-		List<Object> objects = new ArrayList<>();
+		List<Object> objects = new ArrayList<Object>();
 		while (iterator.hasNext()) {
 			String key = iterator.next();
 			columnSql.append(i == 0 ? "" : ",");
@@ -316,9 +335,9 @@ public class DBUtil {
 	 * @param tableName 要删除的表名
 	 * @param whereMap  删除的条件
 	 * @return 影响的行数
-	 * @throws SQLException SQL执行异常
+	 * @throws Exception 
 	 */
-	public static int delete(String tableName, Map<String, Object> whereMap) throws SQLException {
+	public static int delete(String tableName, Map<String, Object> whereMap) throws Exception {
 		/** 准备删除的sql语句 **/
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM ");
@@ -352,9 +371,9 @@ public class DBUtil {
 	 * @param sql      sql语句
 	 * @param bindArgs 绑定参数
 	 * @return 影响的行数
-	 * @throws SQLException SQL异常
+	 * @throws Exception 
 	 */
-	public static int executeUpdate(String sql, Object[] bindArgs) throws SQLException {
+	public static int executeUpdate(String sql, Object[] bindArgs) throws Exception {
 		/** 影响的行数 **/
 		int affectRowCount = -1;
 		Connection connection = null;
@@ -408,9 +427,9 @@ public class DBUtil {
 	 *
 	 * @param sql
 	 * @return 查询的数据集合
-	 * @throws SQLException
+	 * @throws Exception 
 	 */
-	public static List<Map<String, Object>> query(String sql) throws SQLException {
+	public static List<Map<String, Object>> query(String sql) throws Exception {
 		return executeQuery(sql, null);
 	}
 
@@ -447,10 +466,9 @@ public class DBUtil {
 	 * @param whereClause where条件的sql
 	 * @param whereArgs   where条件中占位符中的值
 	 * @return List<Map<String, Object>>
-	 * @throws SQLException
+	 * @throws Exception 
 	 */
-	public static List<Map<String, Object>> query(String tableName, String whereClause, String[] whereArgs)
-			throws SQLException {
+	public static List<Map<String, Object>> query(String tableName, String whereClause, String[] whereArgs) throws Exception {
 		return query(tableName, false, null, whereClause, whereArgs, null, null, null, null);
 	}
 
@@ -467,11 +485,9 @@ public class DBUtil {
 	 * @param orderBy       排序
 	 * @param limit         分页
 	 * @return List<Map<String, Object>>
-	 * @throws SQLException
+	 * @throws Exception 
 	 */
-	public static List<Map<String, Object>> query(String tableName, boolean distinct, String[] columns,
-			String selection, Object[] selectionArgs, String groupBy, String having, String orderBy, String limit)
-			throws SQLException {
+	public static List<Map<String, Object>> query(String tableName, boolean distinct, String[] columns, String selection, Object[] selectionArgs, String groupBy, String having, String orderBy, String limit) throws Exception {
 		String sql = buildQueryString(distinct, tableName, columns, selection, groupBy, having, orderBy, limit);
 		return executeQuery(sql, selectionArgs);
 
@@ -483,10 +499,10 @@ public class DBUtil {
 	 * @param sql      要执行的sql语句
 	 * @param bindArgs 绑定的参数
 	 * @return List<Map<String, Object>>结果集对象
-	 * @throws SQLException SQL执行异常
+	 * @throws Exception 
 	 */
-	public static List<Map<String, Object>> executeQuery(String sql, Object[] bindArgs) throws SQLException {
-		List<Map<String, Object>> datas = new ArrayList<>();
+	public static List<Map<String, Object>> executeQuery(String sql, Object[] bindArgs) throws Exception {
+		List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -529,11 +545,11 @@ public class DBUtil {
 	 * @throws SQLException
 	 */
 	private static List<Map<String, Object>> getDatas(ResultSet resultSet) throws SQLException {
-		List<Map<String, Object>> datas = new ArrayList<>();
+		List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
 		/** 获取结果集的数据结构对象 **/
 		ResultSetMetaData metaData = resultSet.getMetaData();
 		while (resultSet.next()) {
-			Map<String, Object> rowMap = new HashMap<>();
+			Map<String, Object> rowMap = new HashMap<String, Object>();
 			for (int i = 1; i <= metaData.getColumnCount(); i++) {
 				rowMap.put(metaData.getColumnName(i), resultSet.getObject(i));
 			}
@@ -573,8 +589,7 @@ public class DBUtil {
 	 *                 LIMIT clause. Passing null denotes no LIMIT clause.
 	 * @return the SQL query string
 	 */
-	private static String buildQueryString(boolean distinct, String tables, String[] columns, String where,
-			String groupBy, String having, String orderBy, String limit) {
+	private static String buildQueryString(boolean distinct, String tables, String[] columns, String where, String groupBy, String having, String orderBy, String limit) {
 		if (isEmpty(groupBy) && !isEmpty(having)) {
 			throw new IllegalArgumentException("HAVING clauses are only permitted when using a groupBy clause");
 		}
@@ -673,8 +688,33 @@ public class DBUtil {
 		}
 		return sb.toString();
 	}
-	
-	
+
+	/**
+	 * @Description: 获取数据条数
+	 * @param sql
+	 * @throws Exception
+	 * @return: Long
+	 */
+	public static long getCount(String sql) throws Exception {
+		Statement stmt = null;
+		Connection connection = null;
+		ResultSet rs = null;
+		long count = 0;
+		try {
+			connection = ConnectionManager.getInstance().getConnection();
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count = rs.getLong(1);
+			}
+			return count;
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DBUtil.close(null, stmt, connection);
+		}
+	}
+
 	public static void close(ResultSet rs, Statement stmt, Connection connection) {
 		try {
 			if (rs != null) {
